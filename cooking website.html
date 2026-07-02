@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gourmet Hub | 50 Professional Recipes</title>
+    
+    <style>
+        :root {
+            --primary-color: #ff4f57;
+            --text-color: #2d3748;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --max-width: 1100px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--card-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-body { padding: 20px; }
+        .card-tag { color: var(--primary-color); font-size: 0.8rem; text-transform: uppercase; font-weight: 700; }
+        .card-title { margin: 10px 0; font-size: 1.25rem; }
+
+        .hidden { display: none; }
+        .back-btn { background: #e2e8f0; padding: 8px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+        .recipe-header img { width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin-top: 20px; }
+        .meta-box { display: flex; gap: 20px; background: #edf2f7; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .recipe-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; margin-top: 30px; }
+        @media (max-width: 768px) { .recipe-layout { grid-template-columns: 1fr; } }
+
+        footer { text-align: center; padding: 40px 0; margin-top: 60px; border-top: 1px solid #e2e8f0; color: #a0aec0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a onclick="showHomepage()" class="logo">🍳 Gourmet Hub</a>
+            <button id="nav-back-btn" class="back-btn hidden" onclick="showHomepage()">← Back</button>
+        </div>
+    </header>
+
+    <div id="homepage-view">
+        <section class="hero">
+            <h1>Welcome to Gourmet Hub</h1>
+            <p>Explore our special 50 hand-crafted, chef-approved recipes.</p>
+        </section>
+        <main class="container">
+            <div class="recipe-grid" id="homepage-grid"></div>
+        </main>
+    </div>
+
+    <div id="detail-view" class="hidden">
+        <main class="container">
+            <div class="recipe-header">
+                <h1 id="recipe-title" style="font-size: 2.5rem; margin-bottom:10px;"></h1>
+                <span id="recipe-category" style="background: #fed7d7; color:#c53030; padding:5px 12px; border-radius:20px; font-weight:bold; font-size:0.85rem;"></span>
+                <div class="meta-box">
+                    <div><strong>Prep:</strong> <span id="prep-time"></span></div>
+                    <div><strong>Cook:</strong> <span id="cook-time"></span></div>
+                    <div><strong>Servings:</strong> <span id="servings"></span></div>
+                </div>
+                <img id="recipe-image" src="" alt="">
+            </div>
+            <div class="recipe-layout">
+                <section>
+                    <h2>Instructions</h2>
+                    <ol id="instructions-list"></ol>
+                </section>
+                <aside>
+                    <h2>Ingredients</h2>
+                    <ul id="ingredients-list"></ul>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Gourmet Hub. Built with VS Code & Optimized for Google.</p>
+    </footer>
+
+    <script>
+        const recipes = [
+            { id: 1, title: "Fluffy Golden Pancakes", category: "Breakfast", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600", prepTime: "10 mins", cookTime: "15 mins", servings: "4", ingredients: ["2 cups flour", "2 tsp baking powder", "2 tbsp sugar", "1.5 cups milk", "1 egg"], instructions: ["Mix dry ingredients.", "Whisk in milk, butter, and eggs.", "Cook on hot pan until golden brown."] },
+            { id: 2, title: "Classic Cheeseburger", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600", prepTime: "15 mins", cookTime: "10 mins", servings: "2", ingredients: ["400g Ground Beef", "2 Bun slices", "2 Cheddar Cheese slices", "Lettuce, Tomato"], instructions: ["Form beef patties.", "Grill for 4 mins each side on high heat.", "Add cheese, lettuce, tomato and serve hot."] },
+            { id: 3, title: "Chewy Chocolate Cookies", category: "Desserts", image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600", prepTime: "15 mins", cookTime: "10 mins", servings: "12", ingredients: ["1 cup butter", "1 cup brown sugar", "2.5 cups flour", "1 cup chocolate chips"], instructions: ["Cream butter and sugar.", "Mix flour and chocolate chips.", "Bake at 350°F for 10 mins."] },
+            { id: 4, title: "Avocado Toast", category: "Breakfast", image: "https://www.jessicagavin.com/wp-content/uploads/2020/07/avocado-toast-11.jpg", prepTime: "5 mins", cookTime: "0 mins", servings: "1", ingredients: ["2 slices of Bread", "1 ripe Avocado", "Salt & Pepper", "Lemon juice"], instructions: ["Toast the bread slices.", "Mash avocado with salt, pepper, and lemon juice.", "Spread over toast."] },
+            { id: 5, title: "Blueberry Muffins", category: "Breakfast", image: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=600", prepTime: "10 mins", cookTime: "20 mins", servings: "6", ingredients: ["Flour", "Fresh Blueberries", "Sugar", "Baking powder", "Milk"], instructions: ["Mix dry ingredients and fold in blueberries.", "Add milk and stir gently.", "Bake in muffin tins at 375°F."] },
+            { id: 6, title: "Creamy Alfredo Pasta", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=600", prepTime: "10 mins", cookTime: "15 mins", servings: "3", ingredients: ["Fettuccine Pasta", "Heavy Cream", "Parmesan Cheese", "Garlic", "Butter"], instructions: ["Boil pasta.", "Melt butter with garlic, stir in cream and cheese.", "Toss pasta inside sauce."] },
+            { id: 7, title: "Pepperoni Pizza", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600", prepTime: "20 mins", cookTime: "12 mins", servings: "4", ingredients: ["Pizza Dough", "Marinara Sauce", "Mozzarella Cheese", "Pepperoni slices"], instructions: ["Roll out pizza dough.", "Spread sauce, cheese, and pepperonis.", "Bake at 450°F until crust is crispy."] },
+            { id: 8, title: "Grilled Cheese Sandwich", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600", prepTime: "5 mins", cookTime: "5 mins", servings: "1", ingredients: ["2 slices Bread", "2 slices Cheddar Cheese", "Butter"], instructions: ["Butter the outside of bread slices.", "Place cheese in middle.", "Toast in a pan until cheese melts."] },
+            { id: 9, title: "Crispy Chicken Tenders", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1562967914-608f82629710?w=600", prepTime: "15 mins", cookTime: "15 mins", servings: "3", ingredients: ["Chicken Breast strips", "Breadcrumbs", "Eggs", "Flour", "Spices"], instructions: ["Coat chicken in flour, then dipped egg, then breadcrumbs.", "Fry in hot oil until safe and crispy."] },
+            { id: 10, title: "Caesar Salad", category: "Sides & Snacks", image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600", prepTime: "10 mins", cookTime: "0 mins", servings: "2", ingredients: ["Romaine Lettuce", "Croutons", "Parmesan Cheese", "Caesar Dressing"], instructions: ["Chop lettuce into a bowl.", "Add croutons and cheese shavings.", "Toss well with dressing."] },
+            { id: 11, title: "Garlic Bread", category: "Sides & Snacks", image: "https://tse3.mm.bing.net/th/id/OIP.ad4BUY3Z2O0ix6Ka0CbhvAHaLG?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", prepTime: "5 mins", cookTime: "8 mins", servings: "4", ingredients: ["French Baguette", "Butter", "Minced Garlic", "Parsley"], instructions: ["Mix butter, garlic, and parsley together.", "Slice bread and spread mixture.", "Bake until crunchy."] },
+            { id: 12, title: "Homemade French Fries", category: "Sides & Snacks", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600", prepTime: "15 mins", cookTime: "15 mins", servings: "3", ingredients: ["3 large Potatoes", "Oil for frying", "Salt"], instructions: ["Cut potatoes into long thin sticks.", "Soak in cold water, dry completely.", "Deep fry until golden brown."] },
+            { id: 13, title: "Creamy Tomato Soup", category: "Sides & Snacks", image: "https://tse2.mm.bing.net/th/id/OIP.dwQZXTyJPPYK8xUYFZ0SVwHaKX?r=0&w=1500&h=2100&rs=1&pid=ImgDetMain&o=7&rm=3", prepTime: "10 mins", cookTime: "20 mins", servings: "4", ingredients: ["Canned Tomatoes", "Onion", "Garlic", "Vegetable Broth", "Heavy Cream"], instructions: ["Sauté onions and garlic.", "Add tomatoes and broth, simmer for 15 mins.", "Blend smooth and add cream."] },
+            { id: 14, title: "Hot Buffalo Wings", category: "Sides & Snacks", image: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=600", prepTime: "10 mins", cookTime: "25 mins", servings: "4", ingredients: ["Chicken Wings", "Buffalo Hot Sauce", "Butter", "Garlic powder"], instructions: ["Bake wings at 400°F until fully cooked.", "Mix melted butter with hot sauce.", "Toss wings in sauce."] },
+            { id: 15, title: "Fudgy Chocolate Brownies", category: "Desserts", image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600", prepTime: "15 mins", cookTime: "22 mins", servings: "9", ingredients: ["Melted Chocolate", "Sugar", "Flour", "Butter", "Eggs"], instructions: ["Whisk melted butter, chocolate, and sugar.", "Add eggs, then gently fold in flour.", "Bake in square tin."] },
+            { id: 16, title: "Classic Apple Pie", category: "Desserts", image: "https://images.unsplash.com/photo-1519869325930-281384150729?w=600", prepTime: "30 mins", cookTime: "50 mins", servings: "8", ingredients: ["5 sliced Apples", "Pie Crust dough", "Cinnamon", "Sugar"], instructions: ["Toss apples with cinnamon and sugar.", "Place inside pie crust shell.", "Cover with top crust, bake gold brown."] },
+            { id: 17, title: "Vanilla Cupcakes", category: "Desserts", image: "https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=600", prepTime: "15 mins", cookTime: "18 mins", servings: "12", ingredients: ["Flour", "Sugar", "Butter", "Eggs", "Vanilla Extract"], instructions: ["Beat butter and sugar.", "Add eggs and vanilla, alternate flour and milk.", "Bake in liners."] },
+            { id: 18, title: "Moist Banana Bread", category: "Desserts", image: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=600", prepTime: "10 mins", cookTime: "50 mins", servings: "8", ingredients: ["3 overripe Bananas", "Flour", "Sugar", "Melted Butter"], instructions: ["Mash bananas completely.", "Stir in butter, sugar, and flour.", "Bake in loaf pan at 350°F."] },
+            { id: 19, title: "Classic French Toast", category: "Breakfast", image: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600", prepTime: "5 mins", cookTime: "6 mins", servings: "2", ingredients: ["4 slices Bread", "2 Eggs", "1/4 cup Milk", "Cinnamon"], instructions: ["Whisk eggs, milk, and cinnamon in a shallow bowl.", "Dip bread.", "Fry in buttered skillet."] },
+            { id: 20, title: "Healthy Banana Smoothie", category: "Breakfast", image: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600", prepTime: "5 mins", cookTime: "0 mins", servings: "1", ingredients: ["1 Banana", "1 cup Milk", "1/2 cup Greek Yogurt", "Honey"], instructions: ["Place all ingredients into a blender.", "Blend on high speed until completely smooth."] },
+            
+            // --- NEW RECIPES ADDED TO MAKE IT 50 ---
+            { id: 21, title: "Chicken Biryani", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=600", prepTime: "30 mins", cookTime: "40 mins", servings: "4", ingredients: ["Basmati Rice", "Chicken", "Yogurt", "Biryani Spices", "Onions"], instructions: ["Marinate chicken in yogurt and spices.", "Cook rice separately.", "Layer chicken and rice, let steam."] },
+            { id: 22, title: "Margherita Pizza", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=600", prepTime: "15 mins", cookTime: "10 mins", servings: "2", ingredients: ["Pizza Crust", "Tomato Sauce", "Fresh Mozzarella", "Basil Leaves"], instructions: ["Spread sauce over crust.", "Top with mozzarella slices.", "Bake hot, garnish with fresh basil."] },
+            { id: 23, title: "Chocolate Milkshake", category: "Sides & Snacks", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600", prepTime: "5 mins", cookTime: "0 mins", servings: "1", ingredients: ["Vanilla Ice Cream", "Milk", "Chocolate Syrup"], instructions: ["Blend ice cream, milk, and syrup together until thick."] },
+            { id: 24, title: "Chicken Caesar Wrap", category: "Lunch & Dinner", image: "https://tse1.mm.bing.net/th/id/OIP.H3DOWVzp-Y1w-1DLpC54kgHaJP?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", prepTime: "10 mins", cookTime: "5 mins", servings: "1", ingredients: ["Tortilla Wrap", "Grilled Chicken", "Lettuce", "Caesar dressing"], instructions: ["Toss chicken and lettuce with dressing.", "Roll tightly inside tortilla."] },
+            { id: 25, title: "Mac and Cheese", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1543339494-b4cd4f7ba686?w=600", prepTime: "10 mins", cookTime: "15 mins", servings: "4", ingredients: ["Macaroni", "Cheddar Cheese", "Milk", "Butter", "Flour"], instructions: ["Boil macaroni.", "Make a cheese sauce with butter, flour, milk, cheese.", "Mix together."] },
+            { id: 26, title: "Strawberry Cheesecake", category: "Desserts", image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=600", prepTime: "20 mins", cookTime: "0 mins", servings: "8", ingredients: ["Graham Crackers", "Cream Cheese", "Sugar", "Strawberries"], instructions: ["Make cracker crust.", "Beat cream cheese and sugar, pour into crust.", "Chill and top with strawberries."] },
+            { id: 27, title: "Oatmeal Cookies", category: "Desserts", image: "https://www.twopeasandtheirpod.com/wp-content/uploads/2019/05/oatmeal-cookies-2.jpg", prepTime: "10 mins", cookTime: "12 mins", servings: "15", ingredients: ["Oats", "Flour", "Butter", "Brown Sugar", "Raisins"], instructions: ["Mix wet and dry ingredients together.", "Fold in raisins.", "Bake at 350°F for 12 mins."] },
+            { id: 28, title: "Club Sandwich", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1567234669003-dce7a7a88821?w=600", prepTime: "10 mins", cookTime: "5 mins", servings: "1", ingredients: ["3 Bread Slices", "Chicken Breast", "Mayonnaise", "Lettuce", "Tomato"], instructions: ["Toast bread.", "Layer chicken, mayo, lettuce, and tomato across three slices.", "Cut diagonally."] },
+            { id: 29, title: "Onion Rings", category: "Sides & Snacks", image: "https://i.pinimg.com/originals/00/92/6b/00926bbec43edce93643f4eafa21312b.png", prepTime: "15 mins", cookTime: "8 mins", servings: "3", ingredients: ["Large Onions", "Flour", "Breadcrumbs", "Buttermilk"], instructions: ["Slice onions into rings.", "Dip in flour, buttermilk, then breadcrumbs.", "Fry until golden."] },
+            { id: 30, title: "Beef Tacos", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600", prepTime: "10 mins", cookTime: "10 mins", servings: "3", ingredients: ["Taco Shells", "Minced Beef", "Taco Seasoning", "Cheese", "Salsa"], instructions: ["Brown beef with seasoning.", "Spoon into taco shells.", "Top with cheese and fresh salsa."] },
+            { id: 31, title: "Scrambled Eggs", category: "Breakfast", image: "https://tse4.mm.bing.net/th/id/OIP.RxUKzhWdLFfi7EBJe7f4JAHaEJ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", prepTime: "2 mins", cookTime: "3 mins", servings: "1", ingredients: ["2 Eggs", "1 tbsp Butter", "Salt & Pepper"], instructions: ["Whisk eggs with salt and pepper.", "Melt butter in pan over low heat.", "Stir eggs continuously until soft."] },
+            { id: 32, title: "Waffles", category: "Breakfast", image: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600", prepTime: "10 mins", cookTime: "5 mins", servings: "4", ingredients: ["Flour", "Eggs", "Milk", "Vegetable Oil", "Sugar"], instructions: ["Mix ingredients into smooth batter.", "Pour into hot waffle iron.", "Cook until crisp."] },
+            { id: 33, title: "Greek Salad", category: "Sides & Snacks", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600", prepTime: "10 mins", cookTime: "0 mins", servings: "2", ingredients: ["Cucumber", "Tomatoes", "Feta Cheese", "Olives", "Olive oil"], instructions: ["Chop veggies.", "Combine in a bowl with olives and cubed feta.", "Drizzle with olive oil."] },
+            { id: 34, title: "Potato Salad", category: "Sides & Snacks", image: "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=600", prepTime: "15 mins", cookTime: "15 mins", servings: "4", ingredients: ["Boiled Potatoes", "Mayonnaise", "Mustard", "Chives"], instructions: ["Cube boiled potatoes.", "Mix mayo, mustard, and chives together.", "Toss potatoes gently in sauce."] },
+            { id: 35, title: "Lemon Loaf Cake", category: "Desserts", image: "https://tse1.mm.bing.net/th/id/OIP.W0dioAeM4ubM3XGZChx03wHaLH?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", prepTime: "15 mins", cookTime: "45 mins", servings: "8", ingredients: ["Flour", "Sugar", "Butter", "Lemon juice & zest", "Eggs"], instructions: ["Cream butter and sugar.", "Mix in eggs, flour, and lemon.", "Bake in loaf pan."] },
+            { id: 36, title: "Chicken Soup", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=600", prepTime: "10 mins", cookTime: "30 mins", servings: "4", ingredients: ["Chicken pieces", "Carrots", "Celery", "Chicken Broth"], instructions: ["Simmer chicken and chopped veggies in broth until tender."] },
+            { id: 37, title: "Egg Fried Rice", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600", prepTime: "5 mins", cookTime: "10 mins", servings: "2", ingredients: ["Cooked Rice", "2 Eggs", "Soy Sauce", "Green Onions"], instructions: ["Scramble eggs in wok.", "Add rice and green onions.", "Stir fry with soy sauce."] },
+            { id: 38, title: "Guacamole & Chips", category: "Sides & Snacks", image: "https://tse3.mm.bing.net/th/id/OIP.l_U2T4LrM6o8thXZy8qtcAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", prepTime: "10 mins", cookTime: "0 mins", servings: "3", ingredients: ["2 Avocados", "Onion", "Lime Juice", "Cilantro", "Tortilla Chips"], instructions: ["Mash avocado.", "Stir in finely chopped onion, cilantro, and lime.", "Serve with chips."] },
+            { id: 39, title: "Chocolate Lava Cake", category: "Desserts", image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600", prepTime: "10 mins", cookTime: "12 mins", servings: "2", ingredients: ["Dark Chocolate", "Butter", "Eggs", "Sugar", "Flour"], instructions: ["Melt chocolate and butter.", "Whisk eggs and sugar, combine both.", "Bake briefly so center stays liquid."] },
+            { id: 40, title: "Iced Coffee", category: "Breakfast", image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=600", prepTime: "5 mins", cookTime: "0 mins", servings: "1", ingredients: ["Espresso shot", "Milk", "Ice cubes", "Sugar"], instructions: ["Dissolve sugar in warm coffee.", "Pour over ice inside a glass, top up with milk."] },
+            { id: 41, title: "Mango Smoothie", category: "Breakfast", image: "https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600", prepTime: "5 mins", cookTime: "0 mins", servings: "1", ingredients: ["Frozen Mango pulp", "Yogurt", "Milk"], instructions: ["Blend all ingredients until creamy."] },
+            { id: 42, title: "Tomato Basil Bruschetta", category: "Sides & Snacks", image: "https://images.unsplash.com/photo-1572656631137-7935297eff55?w=600", prepTime: "10 mins", cookTime: "5 mins", servings: "4", ingredients: ["Baguette", "Tomatoes", "Garlic", "Olive Oil", "Basil"], instructions: ["Toast baguette slices.", "Mix chopped tomatoes, garlic, basil, and oil.", "Spoon onto bread."] },
+            { id: 43, title: "Spaghetti Bolognese", category: "Lunch & Dinner", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600", prepTime: "15 mins", cookTime: "25 mins", servings: "4", ingredients: ["Spaghetti", "Minced Beef", "Tomato Puree", "Onion"], instructions: ["Cook mince and onion, add puree.", "Boil spaghetti.", "Serve meat sauce over noodles."] },
+            { id: 44, title: "Mashed Potatoes", category: "Sides & Snacks", image: "https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600", prepTime: "10 mins", cookTime: "15 mins", servings: "4", ingredients: ["Potatoes", "Butter", "Milk", "Salt & Pepper"], instructions: ["Boil potatoes till soft.", "Mash thoroughly with butter, milk, salt, and pepper."] },
+            { id: 45, title: "Churros", category: "Desserts", image: "https://tse2.mm.bing.net/th/id/OIP.Ps_hIRNqLuZjRWWt4PbSIQHaKy?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", prepTime: "15 mins", cookTime: "10 mins", servings: "4", ingredients: ["Flour", "Water", "Butter", "Sugar", "Cinnamon"], instructions: ["Make dough with water, butter, flour.", "Pipe strips into hot oil, fry.", "Coat in cinnamon sugar."] },
+            { id: 46, title: "Chicken Quesadilla", category: "Lunch & Dinner", image: "https://tse3.mm.bing.net/th/id/OIP.UrlACe2axURP_R9-zxHWWwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", prepTime: "10 mins", cookTime: "8 mins", servings: "2", ingredients: ["Tortillas", "Cooked Chicken shreds", "Cheese"], instructions: ["Place chicken and cheese on half tortilla.", "Fold over and toast in pan until cheese melts."] },
+            { id: 47, title: "Popcorn", category: "Sides & Snacks", image: "https://images.unsplash.com/photo-1578849278619-e73505e9610f?w=600", prepTime: "2 mins", cookTime: "3 mins", servings: "2", ingredients: ["Popcorn Kernels", "Oil", "Butter", "Salt"], instructions: ["Heat oil and kernels in covered pot.", "Shake until popping stops.", "Pour melted butter and salt."] },
+            { id: 48, title: "Apple Turnovers", category: "Desserts", image: "https://th.bing.com/th/id/R.52a8165d870288b3ba17bfd0d681a739?rik=xBuzfUvbVvRspg&pid=ImgRaw&r=0", prepTime: "15 mins", cookTime: "20 mins", servings: "4", ingredients: ["Puff Pastry", "Apple Pie Filling"], instructions: ["Cut pastry squares.", "Add spoonful of filling, fold into triangle.", "Bake at 400°F."] },
+            { id: 49, title: "Eggs Benedict", category: "Breakfast", image: "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=600", prepTime: "10 mins", cookTime: "10 mins", servings: "2", ingredients: ["English Muffins", "Eggs", "Hollandaise Sauce"], instructions: ["Toast muffins.", "Poach eggs carefully.", "Assemble with egg on muffin, pour sauce on top."] },
+            { id: 50, title: "Fruit Salad", category: "Desserts", image: "https://www.wellplated.com/wp-content/uploads/2021/05/Delicious-Fruit-Salad.jpg", prepTime: "10 mins", cookTime: "0 mins", servings: "4", ingredients: ["Apples", "Bananas", "Strawberries", "Grapes", "Honey"], instructions: ["Chop all fruits into even bites.", "Toss together in a large bowl, drizzle honey."] }
+        ];
+
+        // System Core Logic
+        const grid = document.getElementById('homepage-grid');
+        
+        recipes.forEach(recipe => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => showRecipe(recipe.id);
+            card.innerHTML = `
+                <img src="${recipe.image}" alt="${recipe.title}">
+                <div class="card-body">
+                    <span class="card-tag">${recipe.category}</span>
+                    <h3 class="card-title">${recipe.title}</h3>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        function showRecipe(id) {
+            const recipe = recipes.find(r => r.id === id);
+            if(!recipe) return;
+
+            document.getElementById('recipe-title').innerText = recipe.title;
+            document.getElementById('recipe-category').innerText = recipe.category;
+            document.getElementById('prep-time').innerText = recipe.prepTime;
+            document.getElementById('cook-time').innerText = recipe.cookTime;
+            document.getElementById('servings').innerText = recipe.servings;
+            document.getElementById('recipe-image').src = recipe.image;
+
+            document.getElementById('ingredients-list').innerHTML = '';
+            document.getElementById('instructions-list').innerHTML = '';
+
+            recipe.ingredients.forEach(i => {
+                let li = document.createElement('li'); li.innerText = i;
+                document.getElementById('ingredients-list').appendChild(li);
+            });
+            recipe.instructions.forEach(s => {
+                let li = document.createElement('li'); li.innerText = s;
+                document.getElementById('instructions-list').appendChild(li);
+            });
+
+            document.getElementById('homepage-view').classList.add('hidden');
+            document.getElementById('detail-view').classList.remove('hidden');
+            document.getElementById('nav-back-btn').classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+
+        function showHomepage() {
+            document.getElementById('homepage-view').classList.remove('hidden');
+            document.getElementById('detail-view').classList.add('hidden');
+            document.getElementById('nav-back-btn').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
